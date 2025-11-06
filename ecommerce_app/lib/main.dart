@@ -14,12 +14,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+
   runApp(
-    // 2. We wrap our app in the provider
     ChangeNotifierProvider(
-      // 3. This "creates" one instance of our cart
       create: (context) => CartProvider(),
-      // 4. The child is our normal app
       child: const MyApp(),
     ),
   );

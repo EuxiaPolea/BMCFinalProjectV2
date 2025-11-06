@@ -1,6 +1,25 @@
 import 'package:ecommerce_app/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+
+
+class MyApp extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'eCommerce App',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+      ),
+
+      home: const LoginScreen(),
+    );
+  }
+}
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,30 +28,29 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-// 2. This is the State class
+
 class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+
   Future<void> _login() async {
-    // 1. Check if the form is valid
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    // 2. Set loading to true
+
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // 3. This is the Firebase command to sign in
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // 4. If login is successful, the AuthWrapper's stream
-      //    will automatically navigate to HomeScreen
 
     } on FirebaseAuthException catch (e) {
       // 5. This 'catch' block handles Firebase-specific errors
@@ -56,12 +74,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     // 8. ALWAYS set loading to false at the end
-    if (mounted) {
+    if (mounted) { // Check if the widget is still on screen
       setState(() {
         _isLoading = false;
       });
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text('Login'),
       ),
       // 2. SingleChildScrollView prevents the keyboard from
-      //    pushing content off-screen
+      //    causing a "pixel overflow" error
       body: SingleChildScrollView(
         child: Padding(
           // 3. Add padding around the form
@@ -83,15 +103,18 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               // 7. Center the contents of the column
               mainAxisAlignment: MainAxisAlignment.center,
+
               children: [
                 const SizedBox(height: 20),
+                // 2. The Email Text Field
                 TextFormField(
-                  controller: _emailController,
+                  controller: _emailController, // 3. Link the controller
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    border: OutlineInputBorder(),
+                    border: OutlineInputBorder(), // 4. Nice border
                   ),
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.emailAddress, // 5. Show '@' on keyboard
+                  // 6. Validator function
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
@@ -99,17 +122,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (!value.contains('@')) {
                       return 'Please enter a valid email';
                     }
-                    return null;
+                    return null; // 'null' means the input is valid
                   },
                 ),
+
+                // 7. A spacer
                 const SizedBox(height: 16),
+
+                // 8. The Password Text Field
                 TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
+                  controller: _passwordController, // 9. Link the controller
+                  obscureText: true, // 10. This hides the password
                   decoration: const InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
+                  // 11. Validator function
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
@@ -120,11 +148,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
+
+
                 const SizedBox(height: 20),
+                // 2. The Login Button
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
+                    minimumSize: const Size.fromHeight(50), // 3. Make it wide
                   ),
+                  // 4. onPressed is the click handler
                   onPressed: _login,
                   child: _isLoading
                       ? const CircularProgressIndicator(
@@ -132,9 +164,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   )
                       : const Text('Login'),
                 ),
+
+                // 6. A spacer
                 const SizedBox(height: 10),
+
+                // 7. The "Sign Up" toggle button
                 TextButton(
                   onPressed: () {
+                    // 8. Navigate to the Sign Up screen
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: (context) => const SignUpScreen(),
@@ -143,6 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: const Text("Don't have an account? Sign Up"),
                 ),
+
+
+                // The Form Fields will go here
               ],
             ),
           ),
@@ -150,6 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
 
   // 3. Create a GlobalKey for the Form
   final _formKey = GlobalKey<FormState>();
